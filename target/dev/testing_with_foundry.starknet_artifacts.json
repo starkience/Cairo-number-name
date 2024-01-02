@@ -1,0 +1,1 @@
+{"version":1,"contracts":[{"id":"e34lp0hgchske","package_name":"testing_with_foundry","contract_name":"HelloStarknet","artifacts":{"sierra":"testing_with_foundry_HelloStarknet.contract_class.json","casm":"testing_with_foundry_HelloStarknet.compiled_contract_class.json"}}]}
