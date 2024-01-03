@@ -3,22 +3,17 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait INameRegistry<TContractState> {
-    fn store_name(
-        ref self: TContractState, name: felt252);
+    fn store_name(ref self: TContractState, name: felt252);
     fn get_name(self: @TContractState, address: ContractAddress) -> felt252;
     fn get_owner(self: @TContractState) -> NameRegistry::Person;
-    fn set_favorite_number(
-        ref self: TContractState, address: ContractAddress, number: felt252);
+    fn set_favorite_number(ref self: TContractState, address: ContractAddress, number: felt252);
     fn get_total_names(self: @TContractState) -> felt252;
 }
-
 
 #[starknet::contract]
 mod NameRegistry {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
-
-    
 
     #[storage]
     struct Storage {
@@ -53,7 +48,6 @@ mod NameRegistry {
         self.total_names.write(1);
         self.owner.write(owner);
         self.favorite_numbers.write(owner.address, 0)
-        
     }
 
     #[abi(embed_v0)] // when cairo 2.4.0, update to abi
@@ -66,7 +60,7 @@ mod NameRegistry {
         fn get_name(self: @ContractState, address: ContractAddress) -> felt252 {
             let name = self.names.read(address);
             name
-        }   
+        }
         fn get_owner(self: @ContractState) -> Person {
             let owner = self.owner.read();
             owner
@@ -83,18 +77,21 @@ mod NameRegistry {
     #[generate_trait] // automatically generate a trait for the internal functions
     impl InternalFunctions of InternalFunctionsTrait {
         fn _store_name( // invoked whenever we identify a new registration, which comes with a user address and a name
-            ref self: ContractState,
-            user: ContractAddress,
-            name: felt252,
-
+            ref self: ContractState, user: ContractAddress, name: felt252,
         ) {
             let mut total_names = self.total_names.read(); // read from total names
-            self.names.write(user, name); // store the 'name' in the contract's map 'names', associating it with the 'user's address
-            self.total_names.write(total_names + 1); // increment with each additional registration, update the total names count in the contract storage
+            self
+                .names
+                .write(
+                    user, name
+                ); // store the 'name' in the contract's map 'names', associating it with the 'user's address
+            self
+                .total_names
+                .write(
+                    total_names + 1
+                ); // increment with each additional registration, update the total names count in the contract storage
             self.emit(StoredName { user, name }); // log the action with an event
-
         }
-        
     }
 
     // outside of impl block, aka private/internal, hence no need for external, not accessing contract state
@@ -103,11 +100,8 @@ mod NameRegistry {
     }
 
     fn get_owner_storage_address(self: @ContractState) -> starknet::StorageBaseAddress {
-        self.owner.address() // return the key in the contract's storage where info about the Person struct is stored
+        self
+            .owner
+            .address() // return the key in the contract's storage where info about the Person struct is stored
     }
 }
-
-
-
-
-
