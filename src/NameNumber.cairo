@@ -54,7 +54,6 @@ mod NameRegistry {
         self.owner.write(owner);
         self.favorite_numbers.write(owner.address, 0)
         
-        // add registration_type initialization 
     }
 
     #[abi(embed_v0)] // when cairo 2.4.0, update to abi
@@ -76,11 +75,12 @@ mod NameRegistry {
             self.favorite_numbers.write(address, number);
         }
         fn get_total_names(self: @ContractState) -> felt252 {
-            self.total_names.read()
+            let total_names = self.total_names.read();
+            total_names
         }
     }
 
-    #[generate_trait]
+    #[generate_trait] // automatically generate a trait for the internal functions
     impl InternalFunctions of InternalFunctionsTrait {
         fn _store_name( // invoked whenever we identify a new registration, which comes with a user address and a name
             ref self: ContractState,
@@ -106,3 +106,8 @@ mod NameRegistry {
         self.owner.address() // return the key in the contract's storage where info about the Person struct is stored
     }
 }
+
+
+
+
+
